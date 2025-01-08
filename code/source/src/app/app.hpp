@@ -27,8 +27,13 @@ class App3D : public mgl::App {
   unsigned int depthTexture;
   unsigned int rbo;
   unsigned int quadVBO, quadVAO;
+
+  unsigned int VBO, VAO;
+
+
   mgl::ShaderProgram *Shaders = nullptr;
   mgl::ShaderProgram *ScreenShaders = nullptr;
+  mgl::ShaderProgram *ParticleShaders = nullptr;
   mgl::SceneGraph *Scene = nullptr;
   std::vector<std::pair<mgl::Mesh*, int>> Meshes = {};
 

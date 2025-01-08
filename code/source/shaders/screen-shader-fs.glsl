@@ -159,10 +159,10 @@ vec3 cannyEdgeDetector(void){
     float sw = LinearizeDepth(texture(depthTexture, exTexCoord + offset * vec2(-1, -1)).r) / far;
 
     if(n-s > 0.1 || w - e > 0.1 || e - w > 0.1 || s - n > 0.1){
-        col = vec3(0.0);
+        col = vec3(1.0);
     }
     if(nw - se > 0.1 || ne - sw > 0.1 || se - nw > 0.1 || sw - ne > 0.1){
-        col = vec3(0.0);
+        col = vec3(1.0);
     }
     
     return col;
@@ -170,6 +170,6 @@ vec3 cannyEdgeDetector(void){
 
 void main(void)
 {
-    FragmentColor = vec4(cannyEdgeDetector(), 1.0);
+    FragmentColor = vec4(screenColour(), 1.0);
     
 }

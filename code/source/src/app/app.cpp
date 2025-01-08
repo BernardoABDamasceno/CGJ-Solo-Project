@@ -81,10 +81,31 @@ void App3D::createShaderPrograms() {
 
   ScreenShaders->create();
 
+  // ParticleShaders
+  ParticleShaders = new mgl::ShaderProgram();
+  ParticleShaders->addShader(GL_VERTEX_SHADER, "../../shaders/particle-vs.glsl");
+  ParticleShaders->addShader(GL_FRAGMENT_SHADER, "../../shaders/particle-fs.glsl");
+  ParticleShaders->addShader(GL_GEOMETRY_SHADER, "../../shaders/particle-gs.glsl");
+
+  // ParticleShaders->addAttribute(mgl::POSITION_ATTRIBUTE, mgl::Mesh::POSITION);
+
+  // ParticleShaders->addUniform(mgl::MODEL_MATRIX);
+  // ParticleShaders->addUniform("particleSize");
+
+  // ParticleShaders->addUniformBlock(mgl::CAMERA_BLOCK, UBO_BP);
+
+  ParticleShaders->create();
 
 }
 
 /////////////////////////////////////////////////////////////////////////// DRAW
+
+float points[] = {
+  -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // top-left
+   0.5f,  0.5f, 0.0f, 1.0f, 0.0f, // top-right
+   0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // bottom-right
+  -0.5f, -0.5f, 1.0f, 1.0f, 0.0f  // bottom-left
+};
 
 void App3D::createFrameBuffer(){
   // Create framebuffer
@@ -112,6 +133,19 @@ void App3D::createFrameBuffer(){
     std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
   
   glBindFramebuffer(GL_FRAMEBUFFER, 0); // Unbind framebuffer
+
+
+  // for particle test
+  glGenBuffers(1, &VBO);
+  glGenVertexArrays(1, &VAO);
+  glBindVertexArray(VAO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+  glBindVertexArray(0);
 
 }
 
@@ -143,7 +177,17 @@ void App3D::displayCallback(GLFWwindow *win, double elapsed) {
   glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
   
   drawScene();  
+
+  //particles
+
+  ParticleShaders->bind();
+  glBindVertexArray(VAO);
+  // glUniform1f(ParticleShaders->Uniforms["particleSize"].index, 1.0f);
+  glDrawArrays(GL_POINTS, 0, 4);
+  ParticleShaders->unbind();
   
+  ////////////////////////////////////
+
   // second pass
   glBindFramebuffer(GL_FRAMEBUFFER, 0); //back to default
   glDisable(GL_DEPTH_TEST);
