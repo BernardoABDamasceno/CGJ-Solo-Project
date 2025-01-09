@@ -28,7 +28,7 @@ class App3D : public mgl::App {
   unsigned int rbo;
   unsigned int quadVBO, quadVAO;
 
-  unsigned int VBO, VAO;
+  // unsigned int VBO, VAO; for particles
 
 
   mgl::ShaderProgram *Shaders = nullptr;
