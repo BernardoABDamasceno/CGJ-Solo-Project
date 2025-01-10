@@ -243,6 +243,7 @@ void App3D::windowSizeCallback(GLFWwindow *win, int winx, int winy) {
   windowLength = winx;
   windowHeight = winy;
 
+
   glDeleteRenderbuffers(1, &rbo);
   glDeleteTextures(1, &texture);
   glDeleteFramebuffers(1, &fbo);
