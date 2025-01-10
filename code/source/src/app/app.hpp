@@ -58,12 +58,12 @@ class App3D : public mgl::App {
     float yaw = -90.0f;
     float pitch = 0.0f;
     float radius = 10.0f;
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, 1.0f, 20.0f);
+    float near = 1.0f;
+    float far = 100.0f;
+    glm::mat4 projectionMatrix = glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, near, far);
   };
 
-  CameraProperties cam1Properties;
-
-  CameraProperties *currentCamera = &cam1Properties;
+  CameraProperties *currentCamera = new CameraProperties();
   
   bool firstMouse = false;
   bool mouseIsHeld = false;

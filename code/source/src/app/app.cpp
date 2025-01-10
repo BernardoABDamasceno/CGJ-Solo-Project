@@ -79,7 +79,15 @@ void App3D::createShaderPrograms() {
 
   Shaders->addAttribute(mgl::TEXCOORD_ATTRIBUTE, mgl::Mesh::TEXCOORD);
 
+  Shaders->addUniform("near");
+  Shaders->addUniform("far");
+
   ScreenShaders->create();
+
+  ScreenShaders->bind();
+  glUniform1fv(glGetUniformLocation(ScreenShaders->ProgramId, "near"), 1, &currentCamera->near);
+  glUniform1fv(glGetUniformLocation(ScreenShaders->ProgramId, "far"), 1, &currentCamera->far);
+  ScreenShaders->unbind();
 
   // ParticleShaders
   // ParticleShaders = new mgl::ShaderProgram();
@@ -156,11 +164,12 @@ void App3D::drawScene() {
 
 void App3D::initCallback(GLFWwindow *win) {
   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  createFrameBuffer();
 
   createMeshes();
 
   createSceneGraph();
+
+  createFrameBuffer();
 
   createShaderPrograms();  // after mesh;
 
@@ -239,7 +248,7 @@ void App3D::mouseButtonCallback(GLFWwindow *win, int button, int action, int mod
 void App3D::scrollCallback(GLFWwindow *window, double xoffset, double yoffset) {
   currentCamera->radius -= yoffset;
 
-  currentCamera->radius = glm::clamp(currentCamera->radius , 1.0F, 20.0F);
+  currentCamera->radius = glm::clamp(currentCamera->radius , currentCamera->near, currentCamera->far);
 
   // Create quaternions for yaw and pitch
   glm::quat qPitch = glm::angleAxis(glm::radians(currentCamera->pitch), glm::vec3(1.0f, 0.0f, 0.0f));

@@ -148,13 +148,8 @@ float perlin3d(vec3 st){
 }
 
 
-float scale = 10.0;
-void main(void)
-{
-    //vec2 uv =  gl_FragCoord.xy / vec2(640, 480);
-    // vec3 uvw =  vec3(1+worldSpace.x, 0.1+worldSpace.y, 1+worldSpace.z)/2;
-    vec3 uvw = exPosition;
-
+float scale = 20.0;
+float woodTexture(vec3 uvw){
     //1 - noiseless saw wave
     float saw = sawWave(uvw.z, 0.2, 0.0, 1.0);
 
@@ -168,7 +163,7 @@ void main(void)
     float perlinSaw = mix(smoothSaw, noise, 0.5);
 
     //5 ring noise
-    float ringNoise = ring(perlinSaw, noise);
+    float ringNoise = ring(smoothSaw, noise);
 
     //6 - combine noises
     float woodpattern = ringNoise + 0.5*noise;
@@ -176,9 +171,20 @@ void main(void)
     //7 - function retouching
     woodpattern = clamp(woodpattern, 0.0, 1.0);
 
+    return woodpattern;
+}
+
+
+
+void main(void)
+{
+    //vec2 uv =  gl_FragCoord.xy / vec2(640, 480);
+    // vec3 uvw =  vec3(1+worldSpace.x, 0.1+worldSpace.y, 1+worldSpace.z)/2;
 
     vec3 color;
-    color = gooch() ;
-    color = mix(exColour, exColour-vec3(0.2, 0.2, 0.2),vec3(woodpattern));
+    
+    color = blinnPhong();
+    color = mix(color, color-vec3(0.2, 0.2, 0.2),vec3(woodTexture(exPosition)));
+
     FragmentColor = vec4(color, 1.0);
 }

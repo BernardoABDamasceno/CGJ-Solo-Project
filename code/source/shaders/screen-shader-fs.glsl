@@ -10,10 +10,8 @@ uniform sampler2D depthTexture;
 // Kernels
 const float offset = 1.0 / 600.0;
 
-
-
-float near = 1.0;
-float far = 20.0;
+uniform float near;
+uniform float far;
 
 float LinearizeDepth(float depth){
     float z = depth * 2.0 - 1.0;
