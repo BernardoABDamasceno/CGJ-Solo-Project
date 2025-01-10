@@ -36,7 +36,8 @@ class App3D : public mgl::App {
    float lineOn = 0.0f; 
    float stylisedOn = 0.0f;
 
-  mgl::ShaderProgram *Shaders = nullptr;
+  mgl::ShaderProgram *ShaderWood = nullptr;
+  mgl::ShaderProgram *ShaderNoWood = nullptr;
   mgl::ShaderProgram *ScreenShaders = nullptr;
   mgl::ShaderProgram *ParticleShaders = nullptr;
   mgl::SceneGraph *Scene = nullptr;
@@ -85,7 +86,7 @@ class App3D : public mgl::App {
   void populateSceneGraph();
   void setTangram();
   void drawScene();
-
+  void updateStylise();
   void save();
   void load();
 };

@@ -5,6 +5,16 @@
 
 ///////////////////////////////////////////////////////////////////////// Save and load
 
+void App3D::updateStylise(){
+  ShaderWood->bind();
+  glUniform1fv(glGetUniformLocation(ShaderWood->ProgramId, "stylised"), 1, &stylisedOn);
+  ShaderWood->unbind();
+
+  ShaderNoWood->bind();
+  glUniform1fv(glGetUniformLocation(ShaderNoWood->ProgramId, "stylised"), 1, &stylisedOn);
+  ShaderNoWood->unbind();
+}
+
 void App3D::save() {
   // Save the state of the application
   std::ofstream file("../../Save/save.txt");
@@ -40,14 +50,6 @@ void App3D::load() {
     file >> lineOn;
 
     Scene->setCameraView(glm::lookAt(currentCamera->cameraEye, currentCamera->cameraCenter, currentCamera->cameraUp));
-
-    ScreenShaders->bind();
-    glUniform1fv(glGetUniformLocation(ScreenShaders->ProgramId, "lineOn"), 1, &lineOn);
-    ScreenShaders->unbind();
-
-    Shaders->bind();
-    glUniform1fv(glGetUniformLocation(Shaders->ProgramId, "stylised"), 1, &stylisedOn);
-    Shaders->unbind();
 
     file.close();
     std::cout << "Loaded sucessfuly!" << std::endl;
@@ -95,37 +97,54 @@ void App3D::createSceneGraph(){
 }
   
 void App3D::populateSceneGraph(){
-
+  mgl::ShaderProgram* Shaders[] = {ShaderWood, ShaderNoWood};
   for (std::pair<mgl::Mesh*, int> mesh : Meshes){
     for(int j = 0; j < mesh.second; j++)
-      Scene->getRoot()->createSon(mesh.first, Shaders, 
+      Scene->getRoot()->createSon(mesh.first, Shaders[j], 
                                   new glm::vec3(0.392f, 0.32f, 0.185f), 
-                                  glm::translate( glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f + (-1.5f)*pow(-1, j))) );
+                                  glm::translate( glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, (-1.5f)*pow(-1, j))) );
   } 
 }
 
 ///////////////////////////////////////////////////////////////////////// SHADER
 
 void App3D::createShaderPrograms() {
-  Shaders = new mgl::ShaderProgram();
-  Shaders->addShader(GL_VERTEX_SHADER, "../../shaders/blinn-phong-vs.glsl");
-  Shaders->addShader(GL_FRAGMENT_SHADER, "../../shaders/blinn-phong-fs.glsl");
+  // shader wood
+  ShaderWood = new mgl::ShaderProgram();
+  ShaderWood->addShader(GL_VERTEX_SHADER, "../../shaders/light-model-wood-vs.glsl");
+  ShaderWood->addShader(GL_FRAGMENT_SHADER, "../../shaders/light-model-wood-fs.glsl");
 
-  Shaders->addAttribute(mgl::POSITION_ATTRIBUTE, mgl::Mesh::POSITION);
+  ShaderWood->addAttribute(mgl::POSITION_ATTRIBUTE, mgl::Mesh::POSITION);
 
-  Shaders->addAttribute(mgl::NORMAL_ATTRIBUTE, mgl::Mesh::NORMAL);
+  ShaderWood->addAttribute(mgl::NORMAL_ATTRIBUTE, mgl::Mesh::NORMAL);
 
-  Shaders->addUniform(mgl::MODEL_MATRIX);
-  Shaders->addUniformBlock(mgl::CAMERA_BLOCK, UBO_BP);
-  Shaders->addUniform(mgl::COLOR_ATTRIBUTE);
+  ShaderWood->addUniform(mgl::MODEL_MATRIX);
+  ShaderWood->addUniformBlock(mgl::CAMERA_BLOCK, UBO_BP);
+  ShaderWood->addUniform(mgl::COLOR_ATTRIBUTE);
 
-  Shaders->addUniform("stylised");
+  ShaderWood->addUniform("stylised");
 
-  Shaders->create();
+  ShaderWood->create();
 
-  Shaders->bind();
-  glUniform1fv(glGetUniformLocation(Shaders->ProgramId, "stylised"), 1, &stylisedOn);
-  Shaders->unbind();
+  // shader no wood
+  ShaderNoWood = new mgl::ShaderProgram();
+  ShaderNoWood->addShader(GL_VERTEX_SHADER, "../../shaders/light-model-vs.glsl");
+  ShaderNoWood->addShader(GL_FRAGMENT_SHADER, "../../shaders/light-model-fs.glsl");
+
+  ShaderNoWood->addAttribute(mgl::POSITION_ATTRIBUTE, mgl::Mesh::POSITION);
+
+  ShaderNoWood->addAttribute(mgl::NORMAL_ATTRIBUTE, mgl::Mesh::NORMAL);
+
+  ShaderNoWood->addUniform(mgl::MODEL_MATRIX);
+  ShaderNoWood->addUniformBlock(mgl::CAMERA_BLOCK, UBO_BP);
+  ShaderNoWood->addUniform(mgl::COLOR_ATTRIBUTE);
+
+  ShaderNoWood->addUniform("stylised");
+
+  ShaderNoWood->create();
+
+  //set both
+  updateStylise();
 
   // ScreenShaders
   ScreenShaders = new mgl::ShaderProgram();
@@ -186,10 +205,11 @@ void App3D::drawScene() {
 
 void App3D::initCallback(GLFWwindow *win) {
   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  createSceneGraph();
+
+  load();
 
   createMeshes();
-
-  createSceneGraph();
 
   createFrameBuffer();
 
@@ -197,7 +217,6 @@ void App3D::initCallback(GLFWwindow *win) {
 
   populateSceneGraph();
 
-  load();
 }
 
 void App3D::displayCallback(GLFWwindow *win, double elapsed) {  
@@ -352,9 +371,7 @@ void App3D::keyCallback(GLFWwindow *window, int key, int scancode, int action, i
     glUniform1fv(glGetUniformLocation(ScreenShaders->ProgramId, "lineOn"), 1, &lineOn);
     ScreenShaders->unbind();
 
-    Shaders->bind();
-    glUniform1fv(glGetUniformLocation(Shaders->ProgramId, "stylised"), 1, &stylisedOn);
-    Shaders->unbind();
+    updateStylise();
   }
   else if(key == GLFW_KEY_R && action == GLFW_PRESS){
     stylisedOn = 0.0f;
@@ -364,9 +381,7 @@ void App3D::keyCallback(GLFWwindow *window, int key, int scancode, int action, i
     glUniform1fv(glGetUniformLocation(ScreenShaders->ProgramId, "lineOn"), 1, &lineOn);
     ScreenShaders->unbind();
 
-    Shaders->bind();
-    glUniform1fv(glGetUniformLocation(Shaders->ProgramId, "stylised"), 1, &stylisedOn);
-    Shaders->unbind();
+    updateStylise();
 
     currentCamera->cameraEye = defaultCameraSettings->cameraEye;
     currentCamera->cameraCenter = defaultCameraSettings->cameraCenter;
