@@ -27,6 +27,9 @@ const char TANGENT_ATTRIBUTE[] = "inTangent";
 const char BITANGENT_ATTRIBUTE[] = "inBitangent";
 const char COLOR_ATTRIBUTE[] = "inColor";
 
+const char NEAR_UNIFORM[] = "near";
+const char FAR_UNIFORM[] = "far";
+
 const glm::vec3 RED(1.0f, 0.0f, 0.0f); // red
 const glm::vec3 GREEN(0.0f, 1.0f, 0.0f); // green
 const glm::vec3 BLUE(0.0f, 0.0f, 1.0f); // blue

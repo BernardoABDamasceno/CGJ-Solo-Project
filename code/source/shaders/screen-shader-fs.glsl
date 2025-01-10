@@ -13,6 +13,8 @@ const float offset = 1.0 / 600.0;
 uniform float near;
 uniform float far;
 
+in float exLineOn;
+
 float LinearizeDepth(float depth){
     float z = depth * 2.0 - 1.0;
     return (2.0 * near * far) / (far + near - z * (far - near));
@@ -168,6 +170,10 @@ vec3 cannyEdgeDetector(void){
 
 void main(void)
 {
-    FragmentColor = vec4(screenColour(), 1.0);
-    
+    if(exLineOn == 1.0){
+        FragmentColor = vec4(cannyEdgeDetector(), 1.0);
+    }
+    else{
+        FragmentColor = vec4(screenColour(), 1.0);
+    }
 }

@@ -19,17 +19,22 @@ class App3D : public mgl::App {
   void cursorCallback(GLFWwindow *win, double xpos, double ypos) override;
   void scrollCallback(GLFWwindow *win, double xoffset, double yoffset) override;
   void keyCallback(GLFWwindow *window, int key, int scancode,int action, int mods) override;
+  void windowCloseCallback(GLFWwindow *win) override;
 
  private:
   const GLuint UBO_BP = 0;
+
+  // Framebuffer
   unsigned int fbo;
   unsigned int texture;
   unsigned int depthTexture;
   unsigned int rbo;
+
+  // Screen mesh
   unsigned int quadVBO, quadVAO;
 
-  // unsigned int VBO, VAO; for particles
-
+   float lineOn = 0.0f; 
+   float stylisedOn = 0.0f;
 
   mgl::ShaderProgram *Shaders = nullptr;
   mgl::ShaderProgram *ScreenShaders = nullptr;
@@ -63,6 +68,7 @@ class App3D : public mgl::App {
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, near, far);
   };
 
+  CameraProperties *defaultCameraSettings = new CameraProperties();
   CameraProperties *currentCamera = new CameraProperties();
   
   bool firstMouse = false;

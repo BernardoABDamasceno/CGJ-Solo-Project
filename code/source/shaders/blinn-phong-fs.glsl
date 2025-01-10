@@ -8,6 +8,8 @@ in vec3 exColour;
 in vec3 camPosition;
 in vec3 worldSpace;
 
+in float exStylised;
+
 out vec4 FragmentColor;
 
 vec3 lightColor = vec3(1, 1, 1);
@@ -182,8 +184,12 @@ void main(void)
     // vec3 uvw =  vec3(1+worldSpace.x, 0.1+worldSpace.y, 1+worldSpace.z)/2;
 
     vec3 color;
-    
-    color = blinnPhong();
+    if(exStylised == 0.0){
+        color = blinnPhong();
+    }
+    else{
+        color = gooch();
+    }
     color = mix(color, color-vec3(0.2, 0.2, 0.2),vec3(woodTexture(exPosition)));
 
     FragmentColor = vec4(color, 1.0);
