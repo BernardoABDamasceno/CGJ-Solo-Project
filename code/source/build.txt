@@ -1,0 +1,46 @@
+The process is very similar to what is written in readme.md, however, there are a few differences.
+
+######################################################
+
+Using the command line:
+
+    - cd <project location>/code/source
+
+    - cmake -S . -B build
+
+    - cd ./build
+
+    - cmake --build . --config Release
+
+    - cd ./Release
+
+There should be a SoloProject.exe and
+
+#####################################################
+
+Building through VS Code:
+
+It's built the project through the IDE itself.
+
+To do it the same way, the following extensions will be needed:
+
+C/C++ Extension Pack:
+C/C++
+CMake
+CMake Tools
+After having the extensions installed:
+
+CTRL+SHIFT+P
+CMake: Configure
+Any problems that may arise, it is worth taking a look at the option → CMake: Edit CMake Cache (UI)
+After configuring CMake, an icon for CMake should appear on the left side along with the icons, 
+in this tab you can define which target to execute (SoloProject) under the "Launch" option 
+and then effectively build and run the project and additionally under configure change it to release.
+
+
+During this process, VS Code may ask which "kit" to use (e.g., Visual Studio Build Tools 2022), just select the one that is installed.
+
+####################################################
+
+After having the release executable, to recreate the release folder, it can be made by copying all the required assets and shaders
+to the new release folder and copying the executable to a folder inside the executable folder a folder in the release folder.

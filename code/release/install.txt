@@ -1,0 +1,2 @@
+The only requirement to run the app is to go into the scr folder then into the app folder and run the executable.
+No actual steps needed, when doing release on cmake it make makes static libraries, everything is ready to go from the get go.

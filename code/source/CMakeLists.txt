@@ -55,7 +55,7 @@ FetchContent_MakeAvailable(assimp)
 ######################################## CREATE STATIC LIB FOR TANGRAM ########################################
 
 # define the source files needed to create a static library "tangram_lib" for the project
-set(TANGRAM_SOURCE_FILES 
+set(SOURCE_FILES 
     "libs/mgl/mglShader.cpp"
     "libs/mgl/mglError.cpp"
     "libs/mgl/mglApp.cpp"
@@ -67,12 +67,12 @@ set(TANGRAM_SOURCE_FILES
     "src/app/app.cpp"
 )
 
-add_library(tangram_lib STATIC ${TANGRAM_SOURCE_FILES})
+add_library(Source_lib STATIC ${SOURCE_FILES})
 
-target_include_directories(tangram_lib PUBLIC libs)
-target_link_libraries(tangram_lib PRIVATE glm::glm glfw libglew_static OpenGL::GL assimp)
+target_include_directories(Source_lib PUBLIC libs)
+target_link_libraries(Source_lib PRIVATE glm::glm glfw libglew_static OpenGL::GL assimp)
 
 ############################################### LINK LIBRARIES ################################################
 
 # link the libraries to the executables
-target_link_libraries(SoloProject PRIVATE glm::glm glfw libglew_static OpenGL::GL tangram_lib assimp)
+target_link_libraries(SoloProject PRIVATE glm::glm glfw libglew_static OpenGL::GL Source_lib assimp)
